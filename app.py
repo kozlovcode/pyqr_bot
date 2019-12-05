@@ -3,7 +3,7 @@ import qrcode
 import telebot
 
 # Указываем токен бота
-bot = telebot.TeleBot('YOU BOT TOKEN')
+bot = telebot.TeleBot(os.environ['TOKEN'])
 
 # Обрабатываем комманду /start
 @bot.message_handler(commands=['start'])
