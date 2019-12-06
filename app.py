@@ -1,9 +1,13 @@
 import os
 import qrcode
 import telebot
+from flask import Flask, request
 
 # Указываем токен бота
 bot = telebot.TeleBot(os.environ['TOKEN'])
+
+# Создаем flask сервер
+server = Flask(__name__)
 
 # Обрабатываем комманду /start
 @bot.message_handler(commands=['start'])
@@ -29,5 +33,12 @@ def qrfunc(message):
 	# Удаляем файл
 	os.remove(f'{chatid}.png')
 
-# Запускаем бота
-bot.polling()
+# Принимаем все запросы на корневой адрес / и передаем их боту
+@server.route('/', methods=['POST'])
+def getMessage():
+	bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+	return "!", 200
+
+# Запускаем flask сервер
+if __name__ == "__main__":
+	server.run()
